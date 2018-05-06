@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <!Doctype html>
 <html>
 <header>
@@ -7,22 +9,24 @@
 </header>
 
 <body>
+    <form action="/newblog", method ='POST'>
+        <label> Title
+        <input name=title type=text/>
+    </label>
+        
+        <br>
+        <label> Blog Body
+        <input name=body type=text/>
+    </label>
 
-    <label> Post One
-        <p> Wedding Season during the summer means non-stop preparation.</p>    
-    </label>
-  
-    <label> Post Two
-            <p> Being Blind on a Tuesday. Eek</p>    
-    </label>
-
-    <label> Post Three
-            <p> Trump vs Tiger. Too bad the Tiger didnt win. </p>    
-    </label>
+        <input type="submit" value='submit' />
+    </form>
     
-  
+    <p>{{ errormsg}}</p>
 </body>
 <footer>
     Build-A-Blog Assignment
 </footer>
 </html>
+
+{% endblock %}

@@ -1,34 +1,23 @@
-{% extends "one.html" %}
+{% extends "base.html" %}
 
 {% block content %}
     <h1> Let's Blog! </h1>
-    <form method ='post'>
-        <label>
-            Main Blog:
-            <input type="text" name='main blog'
-        </label>
-        <input type="submit" value='main blog' /> 
-        
+ 
 
+    
 
-        <label>
-            New Blog: 
-            <input type="text" name='newblog'/>
-        </label>
-        <input type="submit" value='Newblog' />
-
-        
-    </form>
-
-    <hr />
-
-    {% if tasks|length == 0 %}
-    <p>No tasks yet</p>
+    {% if blogs|length == 0 %}
+    <p>blogs</p>
     {%else %}
 
         <ul>
-            {% for newblog in Newblog %}
-            <li>{{new blog}}</li>
+        
+            {% for blog in blogs %}
+            <li>
+                <a href= "/blog?id={{blog.id}}">   {{blog.title}}     </a>
+              
+                {{blog.body}}
+            </li>
             {% endfor %}
         </ul>
 

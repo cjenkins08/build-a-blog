@@ -3,20 +3,32 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://2008:build-a-blog@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:2008@localhost:3306/build-a-blog'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
 
-class Task(db.Model):
+class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
-    completed = db.Column(db.Boolean)
+    title = db.Column(db.String(120))
+    body = db.Column(db.String(120))
 
-    def __init__(self, name):
-        self.name = name
-        self.completed = False
+    def __init__(self, title, body):
+        self.title = title
+        self.body = body
+
+@app.route('/blog', methods=['POST', 'GET'])
+def allblogs():
+    blogs = Blog.query.all()
+    
+
+    blog_value = request.args.get('id')
+    if blog_value: 
+        blogs = Blog.query.get(blog_value)
+        return render_template('individual.html', blogs = blogs)
+    return render_template("mainblog.html", blogs=blogs)
+
 
 mainblog = []
 
@@ -35,47 +47,42 @@ def index():
     return render_template('base.html',title="Let's Build A Blog!", 
         blogs=blogs, completed_blogs=completed_blogs)@app.route('/delete-task', methods=['POST'])
 
-
-@app.route('/delete-blog', methods=['POST'])
-def delete_blog():
-
-    mainblog_id = int(request.form['mainblog-id'])
-    mainblog = mainblog.query.get(mainblog_id)
-    mainblog_id.completed = True
-    db.session.add(mainblog)
-    db.session.commit()
-...
-return redirect('/')
-
     
 
 newblog = []
 
 @app.route('/newblog', methods=['POST', 'GET'])
-def index():
+def new():
+
 
     if request.method == 'POST':
-        newblog = request.form['newblog']
-        new_blog = newblog(new_blog)
-        db.session.add(new_blog)
-        db.session.commit()
+        title = request.form['title']
+        body = request.form['body']
+        errormsg = ''
 
-    blogs = newblog.query.filter_by(completed=False).all()
-    completed_blogs = newblog.query.filter_by(completed=True).all()
-    return render_template('base.html',title="Let's Build A Blog!", 
-        blogs=blogs, completed_blogs=completed_blogs)
+        if title == '' or body == '':
+            errormsg = "You gave me an empty blog. Try again!"
+            return render_template('newblog.html', errormsg =errormsg)
+        else:
+             title = request.form['title']
+             body = request.form['body']
+             individual = Blog(title,body)
+
+             db.session.add(individual)
+             db.session.commit()
+             return redirect('/blog')
+             
+    return render_template('newblog.html')
 
 
-@app.route('/delete-blog', methods=['POST'])
-def delete_blog():
 
-    newblog_id = int(request.form['newblog-id'])
-    newblog = newblog.query.get(newblog_id)
-    newblog_id.completed = True
-    db.session.add(newblog)
-    db.session.commit()
-...
-return redirect('/')
+
+        
+
+
+
+
+
 
 #link needed redirect to the new blog page if the button is selected
 if __name__ == '__main__':
